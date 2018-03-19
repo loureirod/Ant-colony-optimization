@@ -118,7 +118,7 @@ class Ant:
                     S = np.sum(intermediate) - intermediate[city]
 
                     if S==0: #No road from city has ever been visited
-                        possibilities = np.copy(graph[city,:])
+                        possibilities = graph[city,:]
                         possibilities[city] = 0
 
                         new_city = np.random.choice(np.nonzero(possibilities)[0])
@@ -133,7 +133,7 @@ class Ant:
 
             else:
 
-                possibilities = np.copy(graph[city,:])
+                possibilities = graph[city,:]
                 possibilities[self.visited_nodes + [city]] = 0
 
                 new_city = np.random.choice(np.nonzero(possibilities)[0])
