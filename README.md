@@ -1,9 +1,9 @@
 # Ant-colony-optimization
-Python algorithm to find an optimized path through graphs
+Python algorithm to find an optimized path through a graph
 
 ## Computation
 
-environment.py embeds the class **environment**. This class is the one that should be used to compute the colony optimization. The method **step()** should be called every time you want to increment one step to your colony life. It performs various updates:
+*environment.py* embeds the class **environment**. This class is the one that should be used to compute the colony optimization. The method **step()** should be called every time you want to increment one step to your colony life. It performs various updates:
 
 - Evaporates pheromones on the roads
 - Ants secrete pheromones
