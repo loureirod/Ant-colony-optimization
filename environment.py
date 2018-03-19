@@ -39,6 +39,28 @@ class Environment:
 
                 ant.walk()
 
+    def best_path(self):
+        '''Return current best path. Best path is determined by choosing the road with maximum pheromone level at each node'''
+
+        food_node = np.shape(self.pheromone)[0] - 1
+        visited_nodes = []
+        city = 0
+
+        while city != food_node:
+
+            visited_nodes.append(city)
+            
+            city_pheromones = self.pheromone[city,:]
+
+            city_pheromones[visited_nodes] = 0
+
+            city = np.argmax(city_pheromones) #Select best node that hasn't been visited
+
+        visited_nodes.append(city)
+
+        return visited_nodes
+
+
 
 class Ant:
     def __init__(self):
@@ -125,10 +147,9 @@ class Ant:
 
     def secrete(self,pheromone):
         '''Secrete pheromones on the road. To be called after decide'''
-
-        i,j = min(self.road) , max(self.road)
-
+        i,j = self.road
         pheromone[i,j] = self.alpha * np.abs(np.sin( self.beta * pheromone[i,j] + self.gamma ))
+        pheromone[j,i] = pheromone[i,j]
     
     def walk(self):
         ''''Increment road step'''
@@ -159,5 +180,7 @@ if __name__ == '__main__':
         
     # print(log)
     print(np.around(environment.pheromone,2))
+    print('Best path:')
+    print(environment.best_path())
     # print(np.transpose(np.nonzero(environment.pheromone)))
     print("--Code executed--")
