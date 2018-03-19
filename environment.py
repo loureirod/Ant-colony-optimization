@@ -161,26 +161,17 @@ if __name__ == '__main__':
 
     graph = np.array([[0,3,1,4,0],[3,0,1,0,1],[1,1,0,1,3],[4,0,1,0,4],[0,1,3,4,0]],dtype='float32')
     number_ants = 100
-    evaporation_rate = 0.1
+    evaporation_rate = 0.5
     steps = 1000
 
-
     environment = Environment(graph,number_ants,evaporation_rate)
-
-    log = []
 
     for k in range(steps):
         environment.step()
 
-        # log.append(environment.population[2].road)
-        # print(environment.population[2].road_step)
-        # print(environment.population[2].road)
-        # print(environment.population[2].visited_nodes)
-        
-        
-    # print(log)
+    print('Pheromone levels:')
     print(np.around(environment.pheromone,2))
     print('Best path:')
     print(environment.best_path())
-    # print(np.transpose(np.nonzero(environment.pheromone)))
+
     print("--Code executed--")
