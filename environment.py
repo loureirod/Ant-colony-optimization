@@ -106,7 +106,7 @@ class Ant:
             if np.random.uniform(0,1) < self.randomness_rate: # Random decision or not
                 if np.random.uniform(0,1) < self.decision_threshold: 
 
-                    estimator = self.heuristic(graph[city,:]) * np.power(pheromone[city,:],self.delta)
+                    estimator = np.power(self.heuristic(graph[city,:]),self.delta) * pheromone[city,:]
 
                     estimator[self.visited_nodes + [city]] = 0
 
