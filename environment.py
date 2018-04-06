@@ -22,9 +22,9 @@ class Environment:
 
         for ant in self.population:
 
-            if ant.road_step == graph[ant.road[0],ant.road[1]]: #Ant reached node
+            if ant.road_step == self.graph[ant.road[0],ant.road[1]]: #Ant reached node
                 
-                if ant.road[1] == np.shape(graph)[1]-1:  #Node is the food node
+                if ant.road[1] == np.shape(self.graph)[1]-1:  #Node is the food node
                     ant.state = "backward"
 
                 if ant.road[1] == 0:  #Node is the colony node
@@ -76,6 +76,7 @@ class Ant:
         self.road_step = 0
         self.randomness_rate = np.random.uniform(0,1)
         self.decision_threshold = np.random.uniform(0,self.randomness_rate)
+
         
 
     def heuristic(self,distances):

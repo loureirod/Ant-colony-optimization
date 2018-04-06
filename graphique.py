@@ -86,29 +86,44 @@ rond=can.create_oval(Nods[N-1][0]-10,Nods[N-1][1]-10,(Nods[N-1][0]+10),(Nods[N-1
 for i in range(len(Distance)):
     trait=can.create_line(Nods[Distance[i][0]][0], Nods[Distance[i][0]][1], Nods[Distance[i][1]][0], Nods[Distance[i][1]][1],dash=((4,4)),width=3)
 
-number_ants = 100
-evaporation_rate = 0.5
+number_ants = 20
+evaporation_rate = 0.00005
 steps = 1000
 environment = environment.Environment(Graph,number_ants,evaporation_rate)
+active=True
 
 def anime():
     environment.step()
     for i in range(0,number_ants):
-        environment.population[i].move() 
-    fenetre.after(5,anime)
+        afficher(environment.population[i])
+    fenetre.after(1,anime)
 
+    
 def start():
     global flag
     flag=1
     for i in range(0,number_ants):
-        environment.population[i].start()
-    anime()
+    	environment.population[i].x=Nods[environment.population[i].road[0]][0]
+    	environment.population[i].y=Nods[environment.population[i].road[0]][1]
+    	environment.population[i].oval=can.create_oval(environment.population[i].x-5,environment.population[i].y-5,environment.population[i].x+5,environment.population[i].y+5,width=2,fill="blue") #draw the initial corps of the ant
+    anime()	
 
 def stop():
     global flag
     flag=0
     for i in range(0,number_ants):
         environment.population[i].stop()
+        self.x= Nods[self.road[0]][0]
+        self.y= Nods[self.road[0]][1]
+        self.oval=can.create_oval(self.x-5,self.y-5,self.x+5,self.y+5,width=2,fill="blue") #draw the initial corps of the ant
+
+
+def afficher(Anti):
+	Anti.x=Nods[Anti.road[0]][0] + Anti.road_step/Graph[Anti.road[0]][Anti.road[1]]*(Nods[Anti.road[1]][0]-Nods[Anti.road[0]][0])
+	Anti.y=Nods[Anti.road[0]][1] + Anti.road_step/Graph[Anti.road[0]][Anti.road[1]]*(Nods[Anti.road[1]][1]-Nods[Anti.road[0]][1])
+	can.coords(Anti.oval,Anti.x-5,Anti.y-5,Anti.x+5,Anti.y+5)
+
+
 
 boutonGO = Button(fenetre, text='GO', width =3,command=start)
 boutonGO.pack(side=BOTTOM)
@@ -116,3 +131,10 @@ boutonSTOP = Button(fenetre, text='STOP', width =3,command=stop)
 boutonSTOP.pack(side=BOTTOM)
      
 fenetre.mainloop()
+
+print('Pheromone levels:')
+print(np.around(environment.pheromone,2))
+print('Best path:')
+print(environment.best_path())
+
+print("--Code executed--")
