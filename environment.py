@@ -40,7 +40,7 @@ class Environment:
                 ant.walk()
 
     def best_path(self):
-        '''Return current best path. Best path is determined by choosing the road with maximum pheromone level at each node'''
+        '''Return current best path. Best path is determined by choosing the road with maximum pheromone level at each node '''
 
         food_node = np.shape(self.pheromone)[0] - 1
         visited_nodes = []
