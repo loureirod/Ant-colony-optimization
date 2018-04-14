@@ -75,7 +75,7 @@ class Environment:
 
         visited_nodes.append(city)
 
-        return visited_nodes
+        return visited_nodes    
 
 
 
@@ -91,7 +91,7 @@ class Ant:
         self.selection = "lambda"
         self.road = [0,0]
         self.road_step = 0
-        self.randomness_rate = np.random.uniform(0,1)
+        self.randomness_rate = 0
         self.decision_threshold = np.random.uniform(0,self.randomness_rate)
 
         
@@ -175,7 +175,9 @@ class Ant:
     def secrete(self,pheromone):
         '''Secrete pheromones on the road. To be called after decide'''
         i,j = self.road
-        pheromone[i,j] = self.alpha * np.abs(np.sin( self.beta * pheromone[i,j] + self.gamma ))
+        # pheromone[i,j] = self.alpha * np.abs(np.sin( self.beta * pheromone[i,j] + self.gamma ))
+        pheromone[i,j] = 1.1 * pheromone[i,j] + 0.1
+        
         pheromone[j,i] = pheromone[i,j]
     
     def walk(self):
