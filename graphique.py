@@ -67,7 +67,7 @@ root.quit()
 #########################################################################################
 
 N=len(Nods)
-Speed=3
+Speed=6
 Graph=np.zeros((N,N))
 for i in Distance:
     Graph[i[0]][i[1]]=int(sqrt(i[2]))
@@ -89,8 +89,8 @@ can.create_text(Nods[-1][0]-15, Nods[-1][1]-15,text='%s'%(len(Nods)-1),fill="pur
 for i in range(len(Distance)):
     trait=can.create_line(Nods[Distance[i][0]][0], Nods[Distance[i][0]][1], Nods[Distance[i][1]][0], Nods[Distance[i][1]][1],dash=((4,4)),width=3)
 
-number_ants = 1
-evaporation_rate = 0.00005
+number_ants = 10
+evaporation_rate = 0.00001
 steps = 1000
 environment = environment.Environment(Graph,number_ants,evaporation_rate)
 active=False

@@ -2,7 +2,7 @@ import numpy as np
 
 class Environment:
     def __init__(self,graph,number_ants,evaporation_rate):
-        self.graph = graph  # Matrix of distances between node i and j
+        self.graph = np.copy(graph)  # Matrix of distances between node i and j
         self.pheromone = np.zeros_like(graph) # Matrix of pheromone level between node i and j
         self.number_ants = number_ants
         self.population = []
@@ -29,7 +29,7 @@ class Environment:
 
                 if ant.road[1] == 0:  #Node is the colony node
                     ant.state = "forward"
-                    ant.visited_nodes = []  #Memory is ereased
+                    ant.visited_nodes = []  #Memory is erased
 
 
                 ant.decide(self.pheromone,self.graph)
@@ -38,6 +38,20 @@ class Environment:
             else:
 
                 ant.walk()
+
+        # if np.array_equal(np.transpose(self.graph), self.graph)==False:
+        # print("Graph:")
+        # print(self.graph)
+        # print("Ant state:")
+        # print(self.population[0].state)        
+        # print("Road:")
+        # print(self.population[0].road)
+        # print("Road step:")
+        # print(self.population[0].road_step)
+        # print("Graph distance:")
+        # print(self.graph[self.population[0].road[0],self.population[0].road[1]])
+        # print("-----------------")
+        
 
     def best_path(self):
         '''Return current best path. Best path is determined by choosing the road with maximum pheromone level at each node '''
@@ -53,6 +67,9 @@ class Environment:
             city_pheromones = self.pheromone[city,:]
 
             city_pheromones[visited_nodes] = 0
+
+            if np.nonzero(city_pheromones)[0].size == 0:
+                return "Food node is not on the current best path"
 
             city = np.argmax(city_pheromones) #Select best node that hasn't been visited
 
@@ -104,40 +121,49 @@ class Ant:
 
         else: # State is forward
 
-            if np.random.uniform(0,1) < self.randomness_rate: # Random decision or not
-                if np.random.uniform(0,1) < self.decision_threshold: 
+            possibilities = np.copy(graph[city,:])
+            possibilities[self.visited_nodes] = 0
 
-                    estimator = np.power(self.heuristic(graph[city,:]),self.delta) * pheromone[city,:]
+            if np.nonzero(possibilities)[0].size == 0: # There is no more unvisited node (She is chasing her tail)
+                new_city = np.random.choice(np.nonzero(graph[city,:])[0])
+                print("Every node has been visited: Random choice")
 
-                    estimator[self.visited_nodes + [city]] = 0
+            else: # Normal case
 
-                    new_city = np.argmax(estimator) #Select best node that hasn't been visited
+                if np.random.uniform(0,1) < self.randomness_rate: # Deterministic decision
+                    if np.random.uniform(0,1) < self.decision_threshold: # First type decision
 
-                else:
+                        estimator = np.power(self.heuristic(graph[city,:]),self.delta) * pheromone[city,:]
 
-                    intermediate = np.power(self.heuristic(graph[city,:]),self.sigma) * np.power(pheromone[city,:],self.delta)
-                    S = np.sum(intermediate) - intermediate[city]
-
-                    if S==0: #No road from city has ever been visited
-                        possibilities = graph[city,:]
-                        possibilities[city] = 0
-
-                        new_city = np.random.choice(np.nonzero(possibilities)[0])
-
-                    else:
-
-                        estimator = 1/S * np.power(self.heuristic(graph[city,:]),self.sigma) * np.power(pheromone[city,:],self.delta)
-
-                        estimator[self.visited_nodes + [city]] = 0
+                        estimator[self.visited_nodes] = 0
 
                         new_city = np.argmax(estimator) #Select best node that hasn't been visited
 
-            else:
+                    else: # Second type decision
 
-                possibilities = graph[city,:]
-                possibilities[self.visited_nodes + [city]] = 0
+                        intermediate = np.power(self.heuristic(graph[city,:]),self.sigma) * np.power(pheromone[city,:],self.delta)
+                        S = np.sum(intermediate)
 
-                new_city = np.random.choice(np.nonzero(possibilities)[0])
+                        if S==0: #No road from city has ever been visited
+                            possibilities = np.copy(graph[city,:])
+                            possibilities[city] = 0
+
+                            new_city = np.random.choice(np.nonzero(possibilities)[0])
+
+                        else:
+
+                            estimator = 1/S * np.power(self.heuristic(graph[city,:]),self.sigma) * np.power(pheromone[city,:],self.delta)
+
+                            estimator[self.visited_nodes] = 0
+
+                            new_city = np.argmax(estimator) #Select best node that hasn't been visited
+
+                else: # Random decision
+
+                    possibilities = np.copy(graph[city,:])
+                    possibilities[self.visited_nodes] = 0
+
+                    new_city = np.random.choice(np.nonzero(possibilities)[0])
 
 
             self.road = [city,new_city]
@@ -161,9 +187,9 @@ class Ant:
 if __name__ == '__main__':
 
     graph = np.array([[0,3,1,4,0],[3,0,1,0,1],[1,1,0,1,3],[4,0,1,0,4],[0,1,3,4,0]],dtype='float32')
-    number_ants = 100
+    number_ants = 1
     evaporation_rate = 0.5
-    steps = 1000
+    steps = 20
 
     environment = Environment(graph,number_ants,evaporation_rate)
 
