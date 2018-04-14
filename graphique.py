@@ -16,6 +16,9 @@ last=False
 HEIGHT=400
 WIDTH=800
 
+def newvalue(x):
+    global p
+    p = x
 
 root=Tk()                
 canvas=Canvas(root,height=HEIGHT, width=WIDTH,bg='white') ## création du canvas
@@ -54,25 +57,44 @@ def onrelease_handler(event):
         start = None
         Distance.append([jini,j,(Nods[j][0]-x)**2+(Nods[j][1]-y)**2])
 
-
 canvas.bind('<Button-1>',draw_circle) 
 canvas.bind("<Button-3>", onclick_handler)
 canvas.bind("<ButtonRelease-3>", onrelease_handler)
 canvas.pack()
 
-root.mainloop() 
-root.quit()
+
+
+scale2 = Scale(
+    root,
+    orient='horizontal',
+    from_=1,
+    to=10,
+    length=1000,
+    label='p',
+    command=newvalue,
+)
+
+scale2.pack()
+
+root.mainloop()
 
 
 #########################################################################################
 
+try:
+    a=p
+except:
+    p=1
+
 N=len(Nods)
-Speed=6
 Graph=np.zeros((N,N))
-for i in Distance:
-    Graph[i[0]][i[1]]=int(sqrt(i[2]))
-    Graph[i[1]][i[0]]=int(sqrt(i[2]))
-print(Graph)
+
+def ConstructionGraph(var):
+    for i in Distance:
+        Graph[i[0]][i[1]]=int(sqrt(i[2])/int(p))
+        Graph[i[1]][i[0]]=int(sqrt(i[2])/int(p))
+
+ConstructionGraph(2)
 
 fenetre = Tk()
 can = Canvas(fenetre,bg='dark grey',height=HEIGHT, width=WIDTH)
@@ -129,6 +151,7 @@ def afficher(Anti):
 	Anti.y=Nods[Anti.road[0]][1] + Anti.road_step/(Graph[Anti.road[0]][Anti.road[1]]+1)*(Nods[Anti.road[1]][1]-Nods[Anti.road[0]][1])
 	
 	can.coords(Anti.oval,Anti.x-5,Anti.y-5,Anti.x+5,Anti.y+5)
+
 
 
 
