@@ -19,4 +19,15 @@ To initiate a new environment, the following parameters should be passed :
 
 - **evaporation_rate** : Rate of evaporation of pheromone on the roads. Pheromone is updated by multiplicating pheromone level on the road by (1 – evaporation_rate)
 
+- **alpha** : Amount of pheromones left on road by every ants
+
+- **randomness_rate** : Define the probability of random choice when ants arrive on a node
+
+- **decision_threshold** : Define the probability of applying wether one decision formula or the other one .
+
 To get best path, the method **best_path()** should be called. Best path is determined by choosing the road with maximum pheromone level at each node. It returns a list of nodes composing the path.
+
+### Genetic mecanismes
+
+We generate several environment with random parameters. Then we perform crossover and natural selection to select the environment settings that find the sortest path for a given graph.
+
