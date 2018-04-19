@@ -1,16 +1,101 @@
 import numpy as np
 
-class Environment:
-    def __init__(self,graph,number_ants,evaporation_rate):
-        self.graph = np.copy(graph)  # Matrix of distances between node i and j
-        self.pheromone = np.zeros_like(graph) # Matrix of pheromone level between node i and j
-        self.number_ants = number_ants
-        self.population = []
-        self.evaporation_rate = evaporation_rate
+class Genetic:
+    def __init__(self,nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,test_graph):
+        self.population = [] # Contains [environment,best_path lenght]
+        self.env_iterations = env_iterations
+        self.genetic_iterations = genetic_iterations
+        self.crossover_rate = crossover_rate
+        self.nb_individuals = nb_individuals
+        self.test_graph = test_graph
+        self.stored_best_individual = 0
 
-        #Create population
+        for k in range(nb_individuals):
+            number_ants = np.random.randint(0,nb_ants_max)
+            evaporation_rate = np.random.uniform(0,1)
+            alpha = np.random.uniform(0,10)
+            randomness_rate = np.random.uniform(0,1)
+            decision_threshold = np.random.uniform(randomness_rate,1)
+
+            self.population.append( [Environment(test_graph,number_ants,evaporation_rate,alpha,randomness_rate,decision_threshold),0] )
+
+    # def mutations(self):
+
+    def crossover(self):
+        for k in range(int(self.nb_individuals * self.crossover_rate)):
+            self.population[k] = self.reproduction(self.population[k][0],self.population[k+1][0])
+
+
+    def reproduction(self,individual1,individual2):
+
+        number_ants = int(0.5 * (individual1.number_ants + individual2.number_ants))
+        evaporation_rate = 0.5 * (individual1.evaporation_rate + individual2.evaporation_rate)
+        alpha = 0.5 * (individual1.alpha + individual2.alpha)
+        randomness_rate = 0.5 * (individual1.randomness_rate + individual2.randomness_rate)
+        decision_threshold = 0.5 * (individual1.decision_threshold + individual2.decision_threshold)
+
+        newborn = Environment(self.test_graph,number_ants,evaporation_rate,alpha,randomness_rate,decision_threshold)
+
+        return [newborn,0]
+
+    def evaluate(self,environment):
+
+        environment.initialize_ant_population()
+        for k in range(self.env_iterations):
+            environment.step()
+
+        return environment.best_path()[0]
+
+    def selection(self):
+        for k in range(self.nb_individuals):
+            self.population[k][1] = self.evaluate(self.population[k][0])
+
+        self.population = sorted(self.population, key=lambda x: x[1])
+
+    def animate(self):
+        for k in range(self.genetic_iterations):
+            print("Generation: " + str(k))
+            self.crossover()
+            self.selection()
+
+    def best_individual(self):
+        
+        return self.population[0][0]
+
+    def print_best_individual_params(self):
+        print("Alpha:" + str(self.stored_best_individual.alpha))
+        print("Randomness rate:" + str(self.stored_best_individual.randomness_rate))
+        print("Decision threshold:" + str(self.stored_best_individual.decision_threshold))
+        print("Number of ants:" + str(self.stored_best_individual.number_ants))
+        print("Evaporation rate:" + str(self.stored_best_individual.evaporation_rate))
+        
+
+    def compute_best_individual(self):
+        self.animate()
+        self.stored_best_individual = self.population[0][0]
+        return self.population[0][0]
+
+
+class Environment:
+    def __init__(self,graph,number_ants,evaporation_rate,alpha,randomness_rate,decision_threshold):
+        self.graph = np.copy(graph)  # Matrix of distances between node i and j
+        self.number_ants = number_ants
+        self.evaporation_rate = evaporation_rate
+        self.step_counter = 0
+        self.alpha = alpha
+        self.randomness_rate = randomness_rate
+        self.decision_threshold = decision_threshold
+        self.stored_best_path = [0,[0]] # best_path lenght, best_path nodes
+
+        self.initialize_ant_population()
+        
+
+    def initialize_ant_population(self):
+        self.population = []
+        self.pheromone = np.zeros_like(self.graph) # Matrix of pheromone level between node i and j
+
         for k in range(self.number_ants):
-            self.population.append( Ant() )
+            self.population.append( Ant(self.alpha,self.randomness_rate,self.decision_threshold) )
 
     def evaporate(self):
         self.pheromone = (1-self.evaporation_rate) * self.pheromone
@@ -33,11 +118,20 @@ class Environment:
 
 
                 ant.decide(self.pheromone,self.graph)
-                ant.secrete(self.pheromone)
+                if ant.state != "backward":
+                    ant.secrete(self.pheromone)
 
             else:
 
                 ant.walk()
+
+        # self.step_counter += 1
+
+        # if self.step_counter > 100 :
+        #     print(self.pheromone)
+        #     print("-----------------")
+            
+        #     self.step_counter = 0
 
         # if np.array_equal(np.transpose(self.graph), self.graph)==False:
         # print("Graph:")
@@ -59,6 +153,7 @@ class Environment:
         food_node = np.shape(self.pheromone)[0] - 1
         visited_nodes = []
         city = 0
+        lenght = 0
 
         while city != food_node:
 
@@ -69,30 +164,37 @@ class Environment:
             city_pheromones[visited_nodes] = 0
 
             if np.nonzero(city_pheromones)[0].size == 0:
-                return "Food node is not on the current best path"
+                return np.inf, "Food node is not on the current best path"
 
-            city = np.argmax(city_pheromones) #Select best node that hasn't been visited
+            new_city = np.argmax(city_pheromones) #Select best node that hasn't been visited
+
+            lenght = lenght + self.graph[city,new_city]
+
+            city = new_city
 
         visited_nodes.append(city)
 
-        return visited_nodes    
+        self.stored_best_path = [lenght,visited_nodes]
+
+        return lenght,visited_nodes    
 
 
 
 class Ant:
-    def __init__(self):
-        self.alpha = np.random.uniform(0,5)
+    def __init__(self,alpha,randomness_rate,decision_threshold):
+        self.alpha = alpha
         self.beta = np.random.uniform(-5,5)
         self.gamma = np.random.uniform(-5,5)
-        self.delta = np.random.uniform(0,1)    #For decision
-        self.sigma = np.random.uniform(0,1)    #For decision        
+        self.delta = np.random.uniform(1,2)    #For decision
+        self.sigma = np.random.uniform(0,0)    #For decision (Heuristique)      
         self.state = "forward" #forward,backward
-        self.visited_nodes = []
+        self.visited_nodes = [0]
+        self.newcomer =  True # Enables random decision at begining
         self.selection = "lambda"
         self.road = [0,0]
         self.road_step = 0
-        self.randomness_rate = 0
-        self.decision_threshold = np.random.uniform(0,self.randomness_rate)
+        self.randomness_rate = randomness_rate
+        self.decision_threshold = decision_threshold
 
         
 
@@ -124,20 +226,25 @@ class Ant:
             possibilities = np.copy(graph[city,:])
             possibilities[self.visited_nodes] = 0
 
-            if np.nonzero(possibilities)[0].size == 0: # There is no more unvisited node (She is chasing her tail)
+            if np.nonzero(possibilities)[0].size == 0 or self.newcomer: # There is no more unvisited node (She is chasing her tail) or she is a newcomer
                 new_city = np.random.choice(np.nonzero(graph[city,:])[0])
-                print("Every node has been visited: Random choice")
+
+                if self.newcomer:
+                    self.newcomer = False
 
             else: # Normal case
 
-                if np.random.uniform(0,1) < self.randomness_rate: # Deterministic decision
+                if np.random.uniform(0,1) > self.randomness_rate: # Deterministic decision
                     if np.random.uniform(0,1) < self.decision_threshold: # First type decision
 
-                        estimator = np.power(self.heuristic(graph[city,:]),self.delta) * pheromone[city,:]
+                        estimator = np.power(self.heuristic(graph[city,:]),self.sigma) * pheromone[city,:]
 
                         estimator[self.visited_nodes] = 0
 
-                        new_city = np.argmax(estimator) #Select best node that hasn't been visited
+                        if np.max(estimator)==0: # Optimal choice can't be made
+                            new_city = np.random.choice(np.nonzero(possibilities)[0])
+                        else:
+                            new_city = np.argmax(estimator) #Select best node that hasn't been visited
 
                     else: # Second type decision
 
@@ -146,7 +253,6 @@ class Ant:
 
                         if S==0: #No road from city has ever been visited
                             possibilities = np.copy(graph[city,:])
-                            possibilities[city] = 0
 
                             new_city = np.random.choice(np.nonzero(possibilities)[0])
 
@@ -156,7 +262,10 @@ class Ant:
 
                             estimator[self.visited_nodes] = 0
 
-                            new_city = np.argmax(estimator) #Select best node that hasn't been visited
+                            if np.max(estimator)==0: # Optimal choice can't be made
+                                new_city = np.random.choice(np.nonzero(possibilities)[0])
+                            else:
+                                new_city = np.argmax(estimator) #Select best node that hasn't been visited
 
                 else: # Random decision
 
@@ -175,8 +284,10 @@ class Ant:
     def secrete(self,pheromone):
         '''Secrete pheromones on the road. To be called after decide'''
         i,j = self.road
+
         # pheromone[i,j] = self.alpha * np.abs(np.sin( self.beta * pheromone[i,j] + self.gamma ))
-        pheromone[i,j] = 1.1 * pheromone[i,j] + 0.1
+
+        pheromone[i,j] =  pheromone[i,j] + self.alpha
         
         pheromone[j,i] = pheromone[i,j]
     
@@ -189,11 +300,14 @@ class Ant:
 if __name__ == '__main__':
 
     graph = np.array([[0,3,1,4,0],[3,0,1,0,1],[1,1,0,1,3],[4,0,1,0,4],[0,1,3,4,0]],dtype='float32')
-    number_ants = 1
-    evaporation_rate = 0.5
-    steps = 20
+    number_ants = 30
+    evaporation_rate = 0.01
+    steps = 1000
+    alpha = 1
+    randomness_rate = 0.3
+    decision_threshold = 0.5
 
-    environment = Environment(graph,number_ants,evaporation_rate)
+    environment = Environment(graph,number_ants,evaporation_rate,alpha,randomness_rate,decision_threshold)
 
     for k in range(steps):
         environment.step()

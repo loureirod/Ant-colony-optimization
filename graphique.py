@@ -1,4 +1,4 @@
-import environment
+import environment as env
 from tkinter import *
 import numpy as np
 import tkinter
@@ -111,15 +111,23 @@ can.create_text(Nods[-1][0]-15, Nods[-1][1]-15,text='%s'%(len(Nods)-1),fill="pur
 for i in range(len(Distance)):
     trait=can.create_line(Nods[Distance[i][0]][0], Nods[Distance[i][0]][1], Nods[Distance[i][1]][0], Nods[Distance[i][1]][1],dash=((4,4)),width=3)
 
-number_ants = 3
-evaporation_rate = 0.001
-steps = 1000
-environment = environment.Environment(Graph,number_ants,evaporation_rate)
+steps = 3000
+
+nb_individuals = 10
+nb_ants_max = 100
+env_iterations = 200
+genetic_iterations = 10
+crossover_rate = 0.30
+
+genetic = env.Genetic(nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,Graph)
+
+environment = genetic.compute_best_individual()
+genetic.print_best_individual_params()
 active=False
 
 def anime():
     environment.step()
-    for i in range(0,number_ants):
+    for i in range(0,environment.number_ants):
         afficher(environment.population[i])
     if active==True:
     	fenetre.after(5,anime)
@@ -131,7 +139,7 @@ def start():
 	if hasattr(environment.population[0],'oval'): #hasattr() allows us to know if there is an oval attribute in population, so if start has aready been clicked one time
 		pass
 	else:
-		for i in range(0,number_ants):
+		for i in range(0,environment.number_ants):
 			environment.population[i].x=Nods[environment.population[i].road[0]][0]
 			environment.population[i].y=Nods[environment.population[i].road[0]][1]
 			environment.population[i].oval=can.create_oval(environment.population[i].x-5,environment.population[i].y-5,environment.population[i].x+5,environment.population[i].y+5,width=2,fill="blue") #draw the initial corps of the ant
