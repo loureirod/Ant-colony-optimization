@@ -9,6 +9,7 @@ from random import randint
 from math import sqrt
 import tkinter.font as tkfont
 
+################################### Hyperparameters ######################################
 Nods=[]
 Distance=[]
 first=True
@@ -16,18 +17,23 @@ last=False
 HEIGHT=400
 WIDTH=800
 
-def newvalue(x):
-    global p
-    p = x
+nb_individuals = 10
+nb_ants_max = 100
+env_iterations = 200
+genetic_iterations = 10
+crossover_rate = 0.30
+
+
+######################## First window : the one where we draw lines and circles ###########################
 
 root=Tk()                
-canvas=Canvas(root,height=HEIGHT, width=WIDTH,bg='white') ## création du canvas
+canvas=Canvas(root,height=HEIGHT, width=WIDTH,bg='white') ## creation of the canvas
 canvas.grid()
 
 
 def draw_circle(event):
-    global first,root,canvas ## on passe root et canves comme variable globale dans la fonction, ca permet de pouvoir y accéder de l'intérieur de la fonction
-    x,y=event.x,event.y ## création de nouvelle variable
+    global first,root,canvas 
+    x,y=event.x,event.y 
     if first==True:
         rond=canvas.create_oval(x-10,y-10,(x+10),(y+10),fill="red",width=2)
         first=False
@@ -57,12 +63,16 @@ def onrelease_handler(event):
         start = None
         Distance.append([jini,j,(Nods[j][0]-x)**2+(Nods[j][1]-y)**2])
 
-canvas.bind('<Button-1>',draw_circle) 
+canvas.bind('<Button-1>',draw_circle) # creation of the buttons
 canvas.bind("<Button-3>", onclick_handler)
 canvas.bind("<ButtonRelease-3>", onrelease_handler)
 canvas.pack()
 
 
+##################################### Speed Scale #####################################################
+def newvalue(x):
+    global p
+    p = x
 
 scale2 = Scale(
     root,
@@ -70,36 +80,40 @@ scale2 = Scale(
     from_=1,
     to=10,
     length=1000,
-    label='p',
+    label='Speed',
     command=newvalue,
 )
-
 scale2.pack()
-
 root.mainloop()
 
 
-#########################################################################################
 
-try:
+###################################  The first window is now closed  #######################################
+
+try: #to know whether the value p exists (the value of the scale)
     a=p
-except:
+except: #if not, we say that p=1
     p=1
 
 N=len(Nods)
 Graph=np.zeros((N,N))
 
-def ConstructionGraph(var):
+def ConstructionGraph():
     for i in Distance:
-        Graph[i[0]][i[1]]=int(sqrt(i[2])/int(p))
+        Graph[i[0]][i[1]]=int(sqrt(i[2])/int(p)) #the higher the speed is, the largest the step of every ant is  
         Graph[i[1]][i[0]]=int(sqrt(i[2])/int(p))
 
-ConstructionGraph(2)
+ConstructionGraph()
+
+
+
+############################### To reproduce the exact graph we've drawn before ################################
 
 fenetre = Tk()
 can = Canvas(fenetre,bg='dark grey',height=HEIGHT, width=WIDTH)
 can.pack(side=LEFT,padx=5,pady=5)
 bold_font = tkfont.Font(family="Helvetica", size=12, weight="bold")
+
 
 rond=can.create_oval(Nods[0][0]-12,Nods[0][1]-12,(Nods[0][0]+12),(Nods[0][1]+12),fill="red",width=2)
 can.create_text(Nods[0][0]-15, Nods[0][1]-15,text='0',fill="purple",font=bold_font)
@@ -111,19 +125,18 @@ can.create_text(Nods[-1][0]-15, Nods[-1][1]-15,text='%s'%(len(Nods)-1),fill="pur
 for i in range(len(Distance)):
     trait=can.create_line(Nods[Distance[i][0]][0], Nods[Distance[i][0]][1], Nods[Distance[i][1]][0], Nods[Distance[i][1]][1],dash=((4,4)),width=3)
 
-steps = 3000
 
-nb_individuals = 10
-nb_ants_max = 100
-env_iterations = 200
-genetic_iterations = 10
-crossover_rate = 0.30
+
+######################################################### Genetic training of the population ####################################################
 
 genetic = env.Genetic(nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,Graph)
-
 environment = genetic.compute_best_individual()
 genetic.print_best_individual_params()
 active=False
+
+
+
+####################################################### Gestion of the movment of the ants ######################################################
 
 def anime():
     environment.step()
@@ -163,6 +176,8 @@ def afficher(Anti):
 
 
 
+
+############################################################ Start and stop buttons #####################################################
 
 boutonGO = Button(fenetre, text='GO', width =20,command=start)
 boutonGO.pack(side=BOTTOM)
