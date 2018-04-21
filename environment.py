@@ -73,7 +73,8 @@ class Genetic:
     def compute_best_individual(self):
         self.animate()
         self.stored_best_individual = self.population[0][0]
-        return self.population[0][0]
+        self.stored_best_individual.initialize_ant_population()
+        return self.stored_best_individual
 
 
 class Environment:
