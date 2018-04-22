@@ -175,11 +175,9 @@ def afficher(Anti):
 
 
 
-
-
 ############################################################ Start and stop buttons #####################################################
 
-boutonGO = Button(fenetre, text='GO', width =20,command=start)
+boutonGO = Button(fenetre, text='START', width =20,command=start)
 boutonGO.pack(side=BOTTOM)
 boutonSTOP = Button(fenetre, text='STOP', width =20,command=stop)
 boutonSTOP.pack(side=BOTTOM)
