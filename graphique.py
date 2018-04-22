@@ -19,9 +19,10 @@ WIDTH=800
 
 nb_individuals = 10
 nb_ants_max = 100
-env_iterations = 200
+env_iterations = 100
 genetic_iterations = 10
 crossover_rate = 0.30
+mutations_rate = 0.30
 
 
 ######################## First window : the one where we draw lines and circles ###########################
@@ -129,7 +130,7 @@ for i in range(len(Distance)):
 
 ######################################################### Genetic training of the population ####################################################
 
-genetic = env.Genetic(nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,Graph)
+genetic = env.Genetic(nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,mutations_rate,Graph)
 environment = genetic.compute_best_individual()
 genetic.print_best_individual_params()
 active=False
