@@ -141,27 +141,6 @@ class Environment:
             else:
 
                 ant.walk()
-
-        # self.step_counter += 1
-
-        # if self.step_counter > 100 :
-        #     print(self.pheromone)
-        #     print("-----------------")
-            
-        #     self.step_counter = 0
-
-        # if np.array_equal(np.transpose(self.graph), self.graph)==False:
-        # print("Graph:")
-        # print(self.graph)
-        # print("Ant state:")
-        # print(self.population[0].state)        
-        # print("Road:")
-        # print(self.population[0].road)
-        # print("Road step:")
-        # print(self.population[0].road_step)
-        # print("Graph distance:")
-        # print(self.graph[self.population[0].road[0],self.population[0].road[1]])
-        # print("-----------------")
         
 
     def best_path(self):
