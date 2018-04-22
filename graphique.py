@@ -17,9 +17,9 @@ last=False
 HEIGHT=400
 WIDTH=800
 
-nb_individuals = 10
-nb_ants_max = 100
-env_iterations = 100
+nb_individuals = 15
+nb_ants_max = 1000
+env_iterations = 1000
 genetic_iterations = 10
 crossover_rate = 0.30
 mutations_rate = 0.30

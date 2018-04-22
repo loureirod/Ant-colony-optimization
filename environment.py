@@ -64,7 +64,7 @@ class Genetic:
 
     def animate(self):
         for k in range(self.genetic_iterations):
-            print("Generation: " + str(k))
+            print("Generation: " + str(k+1) + "/" + str(self.genetic_iterations))
             self.crossover()
             self.mutations()
             self.selection()
