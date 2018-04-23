@@ -18,7 +18,7 @@ HEIGHT=400
 WIDTH=800
 
 nb_individuals = 15
-nb_ants_max = 1000
+nb_ants_max = 500
 env_iterations = 1000
 genetic_iterations = 10
 crossover_rate = 0.30
@@ -162,10 +162,6 @@ def start():
 def stop():
 	global active
 	active=False
-	print('Pheromone levels:')
-	print(np.around(environment.pheromone,2))
-	print('Best path:')
-	print(environment.best_path())
 
 
 def afficher(Anti):
