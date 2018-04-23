@@ -99,7 +99,7 @@ class Environment:
         self.evaporation_rate = evaporation_rate
         self.step_counter = 0
         self.alpha = alpha
-        self.randomness_rate = randomness_rate
+        self.randomness_rate = np.random.uniform(0,randomness_rate)
         self.decision_threshold = decision_threshold
         self.stored_best_path = [0,[0]] # best_path lenght, best_path nodes
 
