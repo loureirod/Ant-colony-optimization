@@ -18,18 +18,20 @@ HEIGHT=400
 WIDTH=800
 
 nb_individuals = 15
-nb_ants_max = 500
+nb_ants_max = 100
 env_iterations = 1000
-genetic_iterations = 10
+genetic_iterations = 8
 crossover_rate = 0.30
 mutations_rate = 0.30
 
 
 ######################## First window : the one where we draw lines and circles ###########################
 
-root=Tk()                
+root=Tk()      
+root.title("Première fenêtre")    
+Label(root,text='Dessiner vos noeuds avec le clic gauche et les chemins en restant appuyé avec le clic droit.      Ensuite fermer la fenêtre      Regler la vitesse avec le curseur').pack()      
 canvas=Canvas(root,height=HEIGHT, width=WIDTH,bg='white') ## creation of the canvas
-canvas.grid()
+canvas.pack()
 
 
 def draw_circle(event):
@@ -144,39 +146,42 @@ def anime():
     for i in range(0,environment.number_ants):
         afficher(environment.population[i])
     if active==True:
-    	fenetre.after(5,anime)
+        fenetre.after(5,anime)
 
     
 def start():
-	global active
-	active=True
-	if hasattr(environment.population[0],'oval'): #hasattr() allows us to know if there is an oval attribute in population, so if start has aready been clicked one time
-		pass
-	else:
-		for i in range(0,environment.number_ants):
-			environment.population[i].x=Nods[environment.population[i].road[0]][0]
-			environment.population[i].y=Nods[environment.population[i].road[0]][1]
-			environment.population[i].oval=can.create_oval(environment.population[i].x-5,environment.population[i].y-5,environment.population[i].x+5,environment.population[i].y+5,width=2,fill="blue") #draw the initial corps of the ant
-	anime()	
+    global active
+    active=True
+    if hasattr(environment.population[0],'oval'): #hasattr() allows us to know if there is an oval attribute in population, so if start has aready been clicked one time
+        pass
+    else:
+        for i in range(0,environment.number_ants):
+            environment.population[i].x=Nods[environment.population[i].road[0]][0]
+            environment.population[i].y=Nods[environment.population[i].road[0]][1]
+            if environment.population[i].randomness_rate > 0.35:
+                environment.population[i].oval=can.create_oval(environment.population[i].x-5,environment.population[i].y-5,environment.population[i].x+5,environment.population[i].y+5,width=2,fill="RoyalBlue2")
+            else:
+                environment.population[i].oval=can.create_oval(environment.population[i].x-5,environment.population[i].y-5,environment.population[i].x+5,environment.population[i].y+5,width=2,fill="RoyalBlue4")
+
+            
+    anime()
 
 def stop():
-	global active
-	active=False
+    global active
+    active=False
 
 
 def afficher(Anti):
-	Anti.x=Nods[Anti.road[0]][0] + Anti.road_step/(Graph[Anti.road[0]][Anti.road[1]]+1)*(Nods[Anti.road[1]][0]-Nods[Anti.road[0]][0])
-	Anti.y=Nods[Anti.road[0]][1] + Anti.road_step/(Graph[Anti.road[0]][Anti.road[1]]+1)*(Nods[Anti.road[1]][1]-Nods[Anti.road[0]][1])
-	
-	can.coords(Anti.oval,Anti.x-5,Anti.y-5,Anti.x+5,Anti.y+5)
-
+    Anti.x=Nods[Anti.road[0]][0] + Anti.road_step/(Graph[Anti.road[0]][Anti.road[1]]+1)*(Nods[Anti.road[1]][0]-Nods[Anti.road[0]][0])
+    Anti.y=Nods[Anti.road[0]][1] + Anti.road_step/(Graph[Anti.road[0]][Anti.road[1]]+1)*(Nods[Anti.road[1]][1]-Nods[Anti.road[0]][1])
+    can.coords(Anti.oval,Anti.x-5,Anti.y-5,Anti.x+5,Anti.y+5)
 
 
 
 
 ############################################################ Start and stop buttons #####################################################
 
-boutonGO = Button(fenetre, text='GO', width =20,command=start)
+boutonGO = Button(fenetre, text='START', width =20,command=start)
 boutonGO.pack(side=BOTTOM)
 boutonSTOP = Button(fenetre, text='STOP', width =20,command=stop)
 boutonSTOP.pack(side=BOTTOM)

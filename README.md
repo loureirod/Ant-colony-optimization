@@ -41,6 +41,28 @@ Below is the general structure of **environment.py**
 The following description has to be red with the graphique.py file.
 
 The first window we create manage the clicks of the user to create circles and balls to create the graph. 
+
 So with the left click, we active the **draw-circle function** which conservs the position of the node in the Nods matrix. 
-With the right click, we active the **onclick_handler** which is creating a new line and when we release the mouse, we end this line. To avoid some problems of position, we take the nearest node at the beginning and at the end of the line, so we're sure that a path is connecting two nods. It's the objective of the **Dist** matrix 
+
+With the right click, we active the **onclick_handler** which is creating a new line and when we release the mouse, we end this line.
+
+To avoid some problems of position, we take the nearest node at the beginning and at the end of the line, so we're sure that a path is connecting two nods. It's the objective of the **Dist** matrix 
+
+Finally we create a scale button to adapt the velocity of the ants. The problem is that the **newvalue** function is called only if we have displaced the cursor, so we try/except, we test if the speed value is defined, if not we the 1 value to the speed paramter.
+
+**ConstructionGraph** modifies the **Graph** Matrix which is at the beginning only composed of 0. To this we browse the **Distance** Matrix and for each path, we replace the right value is the Graph Matrix. We can note that this matrix is clearly a symetric one.
+
+To open the next window which permit the visualization of the ants, we have to close the previous one. So then, we can't create any circle or path anymore.
+
+## Dynamic animation
+
+The **start** function is linked with the START button, and this fucntion turn the active global paramter to the True value. Then we've to know if is the first time we click on the start button or if it's not. In the first case, we have to draw blue circles to figure Ants, in the second case, they aready exist, so we just pass. At the end we call the **anime** function, which manage the update of the position of evry ants while the active parameter is True. 
+
+When we click on the stop button, we pass the ative parameter to the False value and so the active function is no longer called. So the ants are stopped. 
+
+
+
+
+
+
 
