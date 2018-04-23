@@ -158,7 +158,7 @@ def start():
         for i in range(0,environment.number_ants):
             environment.population[i].x=Nods[environment.population[i].road[0]][0]
             environment.population[i].y=Nods[environment.population[i].road[0]][1]
-            if environment.population[i].randomness_rate > 0.35:
+            if environment.population[i].randomness_rate > 0.1:
                 environment.population[i].oval=can.create_oval(environment.population[i].x-5,environment.population[i].y-5,environment.population[i].x+5,environment.population[i].y+5,width=2,fill="RoyalBlue2")
             else:
                 environment.population[i].oval=can.create_oval(environment.population[i].x-5,environment.population[i].y-5,environment.population[i].x+5,environment.population[i].y+5,width=2,fill="RoyalBlue4")

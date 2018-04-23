@@ -189,7 +189,7 @@ class Ant:
         self.selection = "lambda"
         self.road = [0,0]
         self.road_step = 0
-        self.randomness_rate = randomness_rate
+        self.randomness_rate = np.random.uniform(0,randomness_rate)
         self.decision_threshold = decision_threshold
 
         
