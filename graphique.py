@@ -17,11 +17,12 @@ last=False
 HEIGHT=400
 WIDTH=800
 
-nb_individuals = 10
-nb_ants_max = 100
-env_iterations = 200
+nb_individuals = 15
+nb_ants_max = 500
+env_iterations = 1000
 genetic_iterations = 10
 crossover_rate = 0.30
+mutations_rate = 0.30
 
 
 ######################## First window : the one where we draw lines and circles ###########################
@@ -129,7 +130,7 @@ for i in range(len(Distance)):
 
 ######################################################### Genetic training of the population ####################################################
 
-genetic = env.Genetic(nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,Graph)
+genetic = env.Genetic(nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,mutations_rate,Graph)
 environment = genetic.compute_best_individual()
 genetic.print_best_individual_params()
 active=False
@@ -161,10 +162,6 @@ def start():
 def stop():
 	global active
 	active=False
-	print('Pheromone levels:')
-	print(np.around(environment.pheromone,2))
-	print('Best path:')
-	print(environment.best_path())
 
 
 def afficher(Anti):

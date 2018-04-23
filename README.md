@@ -14,11 +14,7 @@ To initiate a new environment, the following parameters should be passed :
 
 - **graph** : A 2D array containing distances between nodes. Every node corresponds to index of the array. Node 0 is always the colony and the last node is where the food is located.
 
-- **nb_ants_max** : ??
-
-- **nb_individuals** : ??????
-
-- ** Revoir tous les paramètres en fait, tu les a modifiés**
+- **number_ants** : Number of ants living in the environment.
 
 - **evaporation_rate** : Rate of evaporation of pheromone on the roads. Pheromone is updated by multiplicating pheromone level on the road by (1 – evaporation_rate)
 
@@ -32,7 +28,13 @@ To get best path, the method **best_path()** should be called. Best path is dete
 
 ### Genetic mecanismes
 
-We generate several environment with random parameters. Then we perform crossover and natural selection to select the environment settings that find the sortest path for a given graph.
+We generate several environment with random parameters. Then we perform mutations, crossover and natural selection to select the environment settings that find the sortest path for a given graph. The class **Genetic** is the one that should be used to perform those genetic operations. The method **compute_best_individual()** of this class returns the selected environment that gave the best result during genetic operations.
+
+### Graph UML
+Below is the general structure of **environment.py**
+
+![graph UML](graph_uml.png)
+
 
 ## Graphical Modelling
 

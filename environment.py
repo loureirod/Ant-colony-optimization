@@ -1,11 +1,12 @@
 import numpy as np
 
 class Genetic:
-    def __init__(self,nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,test_graph):
+    def __init__(self,nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,mutations_rate,test_graph):
         self.population = [] # Contains [environment,best_path lenght]
         self.env_iterations = env_iterations
         self.genetic_iterations = genetic_iterations
         self.crossover_rate = crossover_rate
+        self.mutations_rate = mutations_rate
         self.nb_individuals = nb_individuals
         self.test_graph = test_graph
         self.stored_best_individual = 0
@@ -19,7 +20,16 @@ class Genetic:
 
             self.population.append( [Environment(test_graph,number_ants,evaporation_rate,alpha,randomness_rate,decision_threshold),0] )
 
-    # def mutations(self):
+    def mutations(self):
+        selected = np.random.choice([ind[0] for ind in self.population], int(self.nb_individuals * self.mutations_rate))
+
+        for individual in selected:
+            individual.number_ants = max(0, individual.number_ants + np.random.randint(-10,10))
+            individual.evaporation_rate = max(0,individual.evaporation_rate + np.random.uniform(-0.1,0.1))
+            individual.alpha = max(0, individual.alpha + np.random.uniform(-1,1))
+            individual.randomness_rate = min(max(0,individual.randomness_rate + np.random.uniform(-0.5,0.5)),1)
+            individual.decision_threshold = min(max(0,individual.decision_threshold + np.random.uniform(-0.5,0.5)),1)
+            
 
     def crossover(self):
         for k in range(int(self.nb_individuals * self.crossover_rate)):
@@ -54,8 +64,9 @@ class Genetic:
 
     def animate(self):
         for k in range(self.genetic_iterations):
-            print("Generation: " + str(k))
+            print("Generation: " + str(k+1) + "/" + str(self.genetic_iterations))
             self.crossover()
+            self.mutations()
             self.selection()
 
     def best_individual(self):
@@ -63,17 +74,22 @@ class Genetic:
         return self.population[0][0]
 
     def print_best_individual_params(self):
+        print("## Best individual parameters ##")
         print("Alpha:" + str(self.stored_best_individual.alpha))
         print("Randomness rate:" + str(self.stored_best_individual.randomness_rate))
         print("Decision threshold:" + str(self.stored_best_individual.decision_threshold))
         print("Number of ants:" + str(self.stored_best_individual.number_ants))
         print("Evaporation rate:" + str(self.stored_best_individual.evaporation_rate))
+        print("Best path:" + str(self.stored_best_individual.stored_best_path[1]))
+        print("Best path lenght:" + str(self.stored_best_individual.stored_best_path[0]))
+        
         
 
     def compute_best_individual(self):
         self.animate()
         self.stored_best_individual = self.population[0][0]
-        return self.population[0][0]
+        self.stored_best_individual.initialize_ant_population()
+        return self.stored_best_individual
 
 
 class Environment:
@@ -88,6 +104,7 @@ class Environment:
         self.stored_best_path = [0,[0]] # best_path lenght, best_path nodes
 
         self.initialize_ant_population()
+
         
 
     def initialize_ant_population(self):
@@ -124,27 +141,6 @@ class Environment:
             else:
 
                 ant.walk()
-
-        # self.step_counter += 1
-
-        # if self.step_counter > 100 :
-        #     print(self.pheromone)
-        #     print("-----------------")
-            
-        #     self.step_counter = 0
-
-        # if np.array_equal(np.transpose(self.graph), self.graph)==False:
-        # print("Graph:")
-        # print(self.graph)
-        # print("Ant state:")
-        # print(self.population[0].state)        
-        # print("Road:")
-        # print(self.population[0].road)
-        # print("Road step:")
-        # print(self.population[0].road_step)
-        # print("Graph distance:")
-        # print(self.graph[self.population[0].road[0],self.population[0].road[1]])
-        # print("-----------------")
         
 
     def best_path(self):
@@ -300,21 +296,15 @@ class Ant:
 if __name__ == '__main__':
 
     graph = np.array([[0,3,1,4,0],[3,0,1,0,1],[1,1,0,1,3],[4,0,1,0,4],[0,1,3,4,0]],dtype='float32')
-    number_ants = 30
-    evaporation_rate = 0.01
-    steps = 1000
-    alpha = 1
-    randomness_rate = 0.3
-    decision_threshold = 0.5
+    nb_individuals = 10
+    nb_ants_max = 100
+    env_iterations = 100
+    genetic_iterations = 5
+    crossover_rate = 0.30
+    mutations_rate = 0.30
 
-    environment = Environment(graph,number_ants,evaporation_rate,alpha,randomness_rate,decision_threshold)
-
-    for k in range(steps):
-        environment.step()
-
-    print('Pheromone levels:')
-    print(np.around(environment.pheromone,2))
-    print('Best path:')
-    print(environment.best_path())
+    genetic = Genetic(nb_individuals,nb_ants_max,env_iterations,genetic_iterations,crossover_rate,mutations_rate,graph)
+    environment = genetic.compute_best_individual()
+    genetic.print_best_individual_params()
 
     print("--Code executed--")
