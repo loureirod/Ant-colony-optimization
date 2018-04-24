@@ -13,9 +13,9 @@ class Genetic:
 
         for k in range(nb_individuals):
             number_ants = np.random.randint(0,nb_ants_max)
-            evaporation_rate = np.random.uniform(0,1)
-            alpha = np.random.uniform(0,10)
-            randomness_rate = np.random.uniform(0,1)
+            evaporation_rate = np.random.uniform(0,0.1)
+            alpha = np.random.uniform(0,5)
+            randomness_rate = np.random.uniform(0.05,1)
             decision_threshold = np.random.uniform(randomness_rate,1)
 
             self.population.append( [Environment(test_graph,number_ants,evaporation_rate,alpha,randomness_rate,decision_threshold),0] )
@@ -25,9 +25,9 @@ class Genetic:
 
         for individual in selected:
             individual.number_ants = max(0, individual.number_ants + np.random.randint(-10,10))
-            individual.evaporation_rate = max(0,individual.evaporation_rate + np.random.uniform(-0.1,0.1))
-            individual.alpha = max(0, individual.alpha + np.random.uniform(-1,1))
-            individual.randomness_rate = min(max(0,individual.randomness_rate + np.random.uniform(-0.5,0.5)),1)
+            individual.evaporation_rate = max(0,individual.evaporation_rate + np.random.uniform(-0.01,0.01))
+            individual.alpha = max(0, individual.alpha + np.random.uniform(-0.2,0.2))
+            individual.randomness_rate = min(max(0,individual.randomness_rate + np.random.uniform(-0.1,0.1)),1)
             individual.decision_threshold = min(max(0,individual.decision_threshold + np.random.uniform(-0.5,0.5)),1)
             
 
