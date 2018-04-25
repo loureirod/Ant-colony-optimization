@@ -60,6 +60,10 @@ The **start** function is linked with the START button, and this function turn t
 
 When we click on the stop button, we pass the ative parameter to the False value and so the active function is no longer called. So the ants are stopped. 
 
+## Observations
+
+Genetic mechanismes shows that a good colony is a colony with a non-zero **randomness-rate**. This means that some ants often make random decisions. This avoids ants to chase their tail and helps colonies to leave local minimums. Nevertheless, in dynamic animations the best path doesn't appears always clearly because random decisions make some ants to populate other path than the best one. Therefore one shoulds rather relies one the best past printed by the script instead of trying to find it by eye on the dynamic animation. Moreover the best path printed by the script is the one found by the best environment during gentic computations. However, the dynamic animation reset the population of the best environment selected. Consequently, the reseted colony might behave differently than the one that found the best path during genetic computation. That's why the printed best path will always be the good one and the best path displayed on dynamic animation might not.
+
 
 
 
