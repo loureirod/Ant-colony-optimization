@@ -18,7 +18,7 @@ HEIGHT=400
 WIDTH=800
 
 nb_individuals = 15
-nb_ants_max = 100
+nb_ants_max = 300
 env_iterations = 1000
 genetic_iterations = 8
 crossover_rate = 0.30
@@ -29,7 +29,7 @@ mutations_rate = 0.30
 
 root=Tk()      
 root.title("Première fenêtre")    
-Label(root,text='Dessiner vos noeuds avec le clic gauche et les chemins en restant appuyé avec le clic droit.      Ensuite fermer la fenêtre      Regler la vitesse avec le curseur').pack()      
+Label(root,text='Dessiner vos noeuds avec le clic gauche (le dernier sera le point d arrivée) et les chemins en restant appuyé avec le clic droit. Regler la vitesse avec le curseur puis fermer la fenêtre').pack()      
 canvas=Canvas(root,height=HEIGHT, width=WIDTH,bg='white') ## creation of the canvas
 canvas.pack()
 
